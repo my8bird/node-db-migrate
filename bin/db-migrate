@@ -24,6 +24,10 @@ var argv = optimist
       'migrations-dir': process.cwd() + '/migrations' })
     .usage('Usage: db-migrate [up|down|create] migrationName [options]')
 
+    .describe('url', 'The database url to connect to.')
+    .alias('u', 'url')
+    .string('u')
+
     .describe('env', 'The environment to run the migrations under (dev, test, prod).')
     .alias('e', 'env')
     .string('e')
@@ -88,7 +92,11 @@ function createMigrationDir(dir, callback) {
 function loadConfig() {
   if (process.env["DATABASE_URL"]) {
     config.loadUrl(process.env["DATABASE_URL"], argv.env);
-  } else {
+  }
+  else if (argv.url) {
+    config.loadUrl(argv.url)
+  }
+  else {
     config.load(argv.config, argv.env);
   }
   if(verbose) {
